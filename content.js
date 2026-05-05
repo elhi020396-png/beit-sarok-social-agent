@@ -1,6 +1,16 @@
 const Anthropic = require('@anthropic-ai/sdk');
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+// תומך ב-Groq (חינמי) או Anthropic
+const isGroq = !!process.env.GROQ_API_KEY;
+
+const anthropic = isGroq
+  ? new Anthropic({
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: 'https://api.groq.com/openai/v1'
+    })
+  : new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+const AI_MODEL = isGroq ? 'llama-3.3-70b-versatile' : 'claude-opus-4-5';
 
 const BRAND_VOICE = `אתה כותב תוכן עבור "בית סרוק" - שירות דוחות נדל"ן לפני רכישה.
 
@@ -31,7 +41,7 @@ async function generateFacebookPost(topic, goal = 'engagement') {
                    goal === 'sale' ? 'למכור דוח בית סרוק' : 'לייצר מעורבות ועניין';
 
   const response = await anthropic.messages.create({
-    model: 'claude-opus-4-5',
+    model: AI_MODEL,
     max_tokens: 500,
     messages: [{
       role: 'user',
@@ -60,7 +70,7 @@ async function generateInstagramPost(topic, goal = 'engagement') {
                    goal === 'sale' ? 'למכור דוח' : 'לייצר מעורבות';
 
   const response = await anthropic.messages.create({
-    model: 'claude-opus-4-5',
+    model: AI_MODEL,
     max_tokens: 600,
     messages: [{
       role: 'user',
@@ -85,7 +95,7 @@ async function generateInstagramPost(topic, goal = 'engagement') {
 // פוסט לקבוצת פייסבוק (סגנון אישי)
 async function generateGroupPost(topic, goal = 'engagement') {
   const response = await anthropic.messages.create({
-    model: 'claude-opus-4-5',
+    model: AI_MODEL,
     max_tokens: 400,
     messages: [{
       role: 'user',
@@ -111,7 +121,7 @@ async function generateGroupPost(topic, goal = 'engagement') {
 // הצעת פוסט לווצאפ
 async function generateWhatsAppPost(topic) {
   const response = await anthropic.messages.create({
-    model: 'claude-opus-4-5',
+    model: AI_MODEL,
     max_tokens: 300,
     messages: [{
       role: 'user',
@@ -136,7 +146,7 @@ async function generateWhatsAppPost(topic) {
 // כיתוב לסרטון עם האשטגים
 async function generateVideoCaption(videoName) {
   const response = await anthropic.messages.create({
-    model: 'claude-opus-4-5',
+    model: AI_MODEL,
     max_tokens: 400,
     messages: [{
       role: 'user',
@@ -161,7 +171,7 @@ async function generateVideoCaption(videoName) {
 // נושא מוצע לסרטון
 async function generateVideoTopic() {
   const response = await anthropic.messages.create({
-    model: 'claude-opus-4-5',
+    model: AI_MODEL,
     max_tokens: 250,
     messages: [{
       role: 'user',
@@ -184,7 +194,7 @@ async function generateVideoTopic() {
 // תוכנית שבועית
 async function generateWeeklyPlan() {
   const response = await anthropic.messages.create({
-    model: 'claude-opus-4-5',
+    model: AI_MODEL,
     max_tokens: 1500,
     messages: [{
       role: 'user',
@@ -208,7 +218,7 @@ async function generateWeeklyPlan() {
 // מענה ל-DM
 async function generateDMReply(senderName, message) {
   const response = await anthropic.messages.create({
-    model: 'claude-opus-4-5',
+    model: AI_MODEL,
     max_tokens: 300,
     system: `${BRAND_VOICE}
 
@@ -233,7 +243,7 @@ async function generateDMReply(senderName, message) {
 // מענה לתגובה
 async function generateCommentReply(commenterName, comment, postContent) {
   const response = await anthropic.messages.create({
-    model: 'claude-opus-4-5',
+    model: AI_MODEL,
     max_tokens: 150,
     messages: [{
       role: 'user',
